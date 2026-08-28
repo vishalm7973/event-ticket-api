@@ -1,13 +1,14 @@
 const express = require('express');
+const { sendSuccess } = require('../utils/apiResponse');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.json({ message: 'Event Ticket API' });
+  sendSuccess(res, { message: 'Event Ticket API' });
 });
 
 router.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
+  sendSuccess(res, { status: 'ok' });
 });
 
 module.exports = router;
