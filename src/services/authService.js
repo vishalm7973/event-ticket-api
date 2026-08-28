@@ -1,22 +1,21 @@
 const User = require('../models/User');
 const AppError = require('../utils/AppError');
 const { signToken } = require('../utils/jwt');
-const { validateRegister, validateLogin } = require('../validators/authValidator');
+const HTTP = require('../constants/httpStatus');
+const MESSAGES = require('../constants/messages');
 
 const register = async (body) => {
-  validateRegister(body);
-
   const { firstName, lastName, email, password } = body;
 
-  const existingUser = await User.findOne({ email: email.toLowerCase() });
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw new AppError('Email already exists', 409);
+    throw new AppError(MESSAGES.EMAIL_EXISTS, HTTP.CONFLICT);
   }
 
   const user = new User({
-    firstName: firstName.trim(),
-    lastName: lastName.trim(),
-    email: email.trim(),
+    firstName,
+    lastName,
+    email,
   });
 
   user.password = password;
@@ -26,18 +25,16 @@ const register = async (body) => {
 };
 
 const login = async (body) => {
-  validateLogin(body);
-
   const { email, password } = body;
 
-  const user = await User.findOne({ email: email.toLowerCase() }).select('+passwordHash');
+  const user = await User.findOne({ email }).select('+passwordHash');
   if (!user) {
-    throw new AppError('Invalid email or password', 401);
+    throw new AppError(MESSAGES.INVALID_CREDENTIALS, HTTP.UNAUTHORIZED);
   }
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
-    throw new AppError('Invalid email or password', 401);
+    throw new AppError(MESSAGES.INVALID_CREDENTIALS, HTTP.UNAUTHORIZED);
   }
 
   const token = signToken(user._id, user.role);
