@@ -28,4 +28,9 @@ module.exports = {
   EVENT_END_DATE_REQUIRED: 'Valid end date is required',
   END_DATE_AFTER_START: 'End date must be after start date',
   EVENT_CREATED: 'Event created',
+  EVENT_NOT_FOUND: 'Event not found',
+  EVENT_UPDATED: 'Event updated',
+  EVENT_CANCELLED: 'Event cancelled',
+  EVENT_CANCEL_VIA_DELETE: 'Use DELETE to cancel an event',
+  AT_LEAST_ONE_FIELD_REQUIRED: 'At least one field is required',
 };
