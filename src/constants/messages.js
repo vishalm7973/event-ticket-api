@@ -21,4 +21,11 @@ module.exports = {
   LOGOUT_SUCCESS: 'Logged out successfully',
   REFRESH_SUCCESS: 'Token refreshed',
   TOO_MANY_REQUESTS: 'Too many requests, try again later',
+  EVENT_TITLE_REQUIRED: 'Event title is required',
+  EVENT_DESCRIPTION_REQUIRED: 'Event description is required',
+  EVENT_VENUE_REQUIRED: 'Event venue is required',
+  EVENT_START_DATE_REQUIRED: 'Valid start date is required',
+  EVENT_END_DATE_REQUIRED: 'Valid end date is required',
+  END_DATE_AFTER_START: 'End date must be after start date',
+  EVENT_CREATED: 'Event created',
 };
