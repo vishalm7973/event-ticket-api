@@ -114,4 +114,29 @@ const cancelBooking = async (userId, bookingId) => {
   }
 };
 
-module.exports = { createBooking, getMyBookings, cancelBooking };
+const listAllBookings = async (query = {}) => {
+  const filter = {};
+
+  if (query.status) {
+    if (!Object.values(BOOKING_STATUS).includes(query.status)) {
+      throw new AppError(MESSAGES.BOOKING_STATUS_INVALID, HTTP.BAD_REQUEST);
+    }
+    filter.status = query.status;
+  }
+
+  if (query.eventId) {
+    filter.eventId = query.eventId;
+  }
+
+  if (query.userId) {
+    filter.userId = query.userId;
+  }
+
+  return Booking.find(filter)
+    .populate('userId', 'firstName lastName email')
+    .populate('eventId')
+    .populate('ticketId')
+    .sort({ createdAt: -1 });
+};
+
+module.exports = { createBooking, getMyBookings, cancelBooking, listAllBookings };
