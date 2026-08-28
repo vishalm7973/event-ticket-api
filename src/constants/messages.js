@@ -40,4 +40,11 @@ module.exports = {
   TICKET_QUANTITY_INVALID: 'Ticket quantity must be at least 1',
   TICKET_NOT_FOUND: 'Ticket not found',
   TICKET_CREATED: 'Ticket created',
+  BOOKING_EVENT_ID_REQUIRED: 'Event id is required',
+  BOOKING_TICKET_ID_REQUIRED: 'Ticket id is required',
+  BOOKING_QUANTITY_REQUIRED: 'Booking quantity is required',
+  BOOKING_QUANTITY_INVALID: 'Booking quantity must be at least 1',
+  EVENT_NOT_BOOKABLE: 'Event is not available for booking',
+  INSUFFICIENT_TICKETS: 'Insufficient tickets available',
+  BOOKING_CREATED: 'Booking created',
 };
