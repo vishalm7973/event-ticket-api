@@ -10,12 +10,22 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-  const { user, token } = await authService.login(req.body);
-  sendSuccess(res, { user, token }, MESSAGES.LOGIN_SUCCESS);
+  const { user, accessToken, refreshToken } = await authService.login(req.body);
+  sendSuccess(res, { user, accessToken, refreshToken }, MESSAGES.LOGIN_SUCCESS);
+});
+
+const refresh = asyncHandler(async (req, res) => {
+  const tokens = await authService.refresh(req.body.refreshToken);
+  sendSuccess(res, tokens, MESSAGES.REFRESH_SUCCESS);
+});
+
+const logout = asyncHandler(async (req, res) => {
+  await authService.logout(req.user);
+  sendSuccess(res, null, MESSAGES.LOGOUT_SUCCESS);
 });
 
 const getMe = asyncHandler(async (req, res) => {
   sendSuccess(res, req.user);
 });
 
-module.exports = { register, login, getMe };
+module.exports = { register, login, refresh, logout, getMe };

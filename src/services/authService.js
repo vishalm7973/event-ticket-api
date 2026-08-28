@@ -1,8 +1,20 @@
 const User = require('../models/User');
 const AppError = require('../utils/AppError');
-const { signToken } = require('../utils/jwt');
+const { signAccessToken } = require('../utils/jwt');
+const {
+  createRefreshToken,
+  rotateRefreshToken,
+  revokeUserRefreshTokens,
+} = require('./refreshTokenService');
 const HTTP = require('../constants/httpStatus');
 const MESSAGES = require('../constants/messages');
+
+const issueTokens = async (user) => {
+  const accessToken = signAccessToken(user);
+  const refreshToken = await createRefreshToken(user._id);
+
+  return { accessToken, refreshToken };
+};
 
 const register = async (body) => {
   const { firstName, lastName, email, password } = body;
@@ -37,9 +49,36 @@ const login = async (body) => {
     throw new AppError(MESSAGES.INVALID_CREDENTIALS, HTTP.UNAUTHORIZED);
   }
 
-  const token = signToken(user._id, user.role);
+  await revokeUserRefreshTokens(user._id);
+  const tokens = await issueTokens(user);
 
-  return { user, token };
+  return { user, ...tokens };
 };
 
-module.exports = { register, login };
+const refresh = async (refreshToken) => {
+  const rotated = await rotateRefreshToken(refreshToken);
+
+  if (!rotated) {
+    throw new AppError(MESSAGES.INVALID_REFRESH_TOKEN, HTTP.UNAUTHORIZED);
+  }
+
+  const user = await User.findById(rotated.userId);
+  if (!user) {
+    throw new AppError(MESSAGES.USER_NOT_FOUND, HTTP.UNAUTHORIZED);
+  }
+
+  const accessToken = signAccessToken(user);
+
+  return {
+    accessToken,
+    refreshToken: rotated.refreshToken,
+  };
+};
+
+const logout = async (user) => {
+  user.tokenVersion += 1;
+  await user.save();
+  await revokeUserRefreshTokens(user._id);
+};
+
+module.exports = { register, login, refresh, logout };

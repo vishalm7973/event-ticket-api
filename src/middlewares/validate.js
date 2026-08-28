@@ -1,4 +1,4 @@
-const AppError = require('./AppError');
+const AppError = require('../utils/AppError');
 const HTTP = require('../constants/httpStatus');
 
 const validate = (schema) => (req, res, next) => {

@@ -15,5 +15,9 @@ module.exports = {
   NOT_AUTHORIZED: 'Not authorized',
   NO_TOKEN: 'No token provided',
   INVALID_TOKEN: 'Invalid token',
+  INVALID_REFRESH_TOKEN: 'Invalid refresh token',
+  REFRESH_TOKEN_REQUIRED: 'Refresh token is required',
   USER_NOT_FOUND: 'User not found',
+  LOGOUT_SUCCESS: 'Logged out successfully',
+  REFRESH_SUCCESS: 'Token refreshed',
 };
