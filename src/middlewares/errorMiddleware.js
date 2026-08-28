@@ -1,29 +1,32 @@
+const HTTP = require('../constants/httpStatus');
+const MESSAGES = require('../constants/messages');
+
 const errorMiddleware = (err, req, res, next) => {
-  let statusCode = err.statusCode || 500;
-  let message = err.message || 'Internal server error';
+  let statusCode = err.statusCode || HTTP.INTERNAL_SERVER_ERROR;
+  let message = err.message || MESSAGES.INTERNAL_SERVER_ERROR;
 
   // invalid mongodb id in url
   if (err.name === 'CastError') {
-    statusCode = 400;
-    message = 'Invalid resource id';
+    statusCode = HTTP.BAD_REQUEST;
+    message = MESSAGES.INVALID_RESOURCE_ID;
   }
 
   // duplicate value (e.g. email already registered)
   if (err.code === 11000) {
-    statusCode = 409;
+    statusCode = HTTP.CONFLICT;
     const field = Object.keys(err.keyValue || {})[0] || 'field';
     message = `${field} already exists`;
   }
 
   // mongoose schema validation failed
   if (err.name === 'ValidationError') {
-    statusCode = 400;
+    statusCode = HTTP.BAD_REQUEST;
     message = Object.values(err.errors).map((e) => e.message).join(', ');
   }
 
   // hide unexpected server crash details
-  if (!err.isOperational && statusCode === 500) {
-    message = 'Internal server error';
+  if (!err.isOperational && statusCode === HTTP.INTERNAL_SERVER_ERROR) {
+    message = MESSAGES.INTERNAL_SERVER_ERROR;
   }
 
   res.status(statusCode).json({

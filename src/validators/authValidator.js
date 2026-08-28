@@ -1,37 +1,35 @@
-const AppError = require('../utils/AppError');
+const Joi = require('joi');
+const MESSAGES = require('../constants/messages');
 
-const emailRegex = /^\S+@\S+\.\S+$/;
+const registerSchema = Joi.object({
+  firstName: Joi.string().trim().required().messages({
+    'string.empty': MESSAGES.FIRST_NAME_REQUIRED,
+    'any.required': MESSAGES.FIRST_NAME_REQUIRED,
+  }),
+  lastName: Joi.string().trim().required().messages({
+    'string.empty': MESSAGES.LAST_NAME_REQUIRED,
+    'any.required': MESSAGES.LAST_NAME_REQUIRED,
+  }),
+  email: Joi.string().trim().lowercase().email().required().messages({
+    'string.email': MESSAGES.VALID_EMAIL_REQUIRED,
+    'string.empty': MESSAGES.VALID_EMAIL_REQUIRED,
+    'any.required': MESSAGES.VALID_EMAIL_REQUIRED,
+  }),
+  password: Joi.string().min(8).required().messages({
+    'string.min': MESSAGES.PASSWORD_MIN_LENGTH,
+    'any.required': MESSAGES.PASSWORD_REQUIRED,
+  }),
+});
 
-const validateRegister = (body) => {
-  const { firstName, lastName, email, password } = body;
+const loginSchema = Joi.object({
+  email: Joi.string().trim().lowercase().email().required().messages({
+    'string.email': MESSAGES.VALID_EMAIL_REQUIRED,
+    'string.empty': MESSAGES.VALID_EMAIL_REQUIRED,
+    'any.required': MESSAGES.VALID_EMAIL_REQUIRED,
+  }),
+  password: Joi.string().required().messages({
+    'any.required': MESSAGES.PASSWORD_REQUIRED,
+  }),
+});
 
-  if (!firstName?.trim()) {
-    throw new AppError('First name is required', 400);
-  }
-
-  if (!lastName?.trim()) {
-    throw new AppError('Last name is required', 400);
-  }
-
-  if (!email?.trim() || !emailRegex.test(email)) {
-    throw new AppError('Valid email is required', 400);
-  }
-
-  if (!password || password.length < 8) {
-    throw new AppError('Password must be at least 8 characters', 400);
-  }
-};
-
-const validateLogin = (body) => {
-  const { email, password } = body;
-
-  if (!email?.trim() || !emailRegex.test(email)) {
-    throw new AppError('Valid email is required', 400);
-  }
-
-  if (!password) {
-    throw new AppError('Password is required', 400);
-  }
-};
-
-module.exports = { validateRegister, validateLogin };
+module.exports = { registerSchema, loginSchema };
