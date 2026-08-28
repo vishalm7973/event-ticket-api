@@ -33,4 +33,11 @@ module.exports = {
   EVENT_CANCELLED: 'Event cancelled',
   EVENT_CANCEL_VIA_DELETE: 'Use DELETE to cancel an event',
   AT_LEAST_ONE_FIELD_REQUIRED: 'At least one field is required',
+  TICKET_NAME_REQUIRED: 'Ticket name is required',
+  TICKET_PRICE_REQUIRED: 'Ticket price is required',
+  TICKET_PRICE_INVALID: 'Ticket price must be zero or greater',
+  TICKET_QUANTITY_REQUIRED: 'Ticket quantity is required',
+  TICKET_QUANTITY_INVALID: 'Ticket quantity must be at least 1',
+  TICKET_NOT_FOUND: 'Ticket not found',
+  TICKET_CREATED: 'Ticket created',
 };
