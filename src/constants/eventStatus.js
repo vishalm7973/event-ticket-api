@@ -1,0 +1,7 @@
+const EVENT_STATUS = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  CANCELLED: 'CANCELLED',
+};
+
+module.exports = EVENT_STATUS;
