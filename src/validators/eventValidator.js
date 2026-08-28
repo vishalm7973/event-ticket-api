@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const MESSAGES = require('../constants/messages');
+const EVENT_STATUS = require('../constants/eventStatus');
 
 const createEventSchema = Joi.object({
   title: Joi.string().trim().required().messages({
@@ -25,4 +26,21 @@ const createEventSchema = Joi.object({
   }),
 });
 
-module.exports = { createEventSchema };
+const updateEventSchema = Joi.object({
+  title: Joi.string().trim(),
+  description: Joi.string().trim(),
+  venue: Joi.string().trim(),
+  startDate: Joi.date().iso(),
+  endDate: Joi.date().iso(),
+  status: Joi.string()
+    .valid(EVENT_STATUS.DRAFT, EVENT_STATUS.PUBLISHED)
+    .messages({
+      'any.only': MESSAGES.EVENT_CANCEL_VIA_DELETE,
+    }),
+})
+  .min(1)
+  .messages({
+    'object.min': MESSAGES.AT_LEAST_ONE_FIELD_REQUIRED,
+  });
+
+module.exports = { createEventSchema, updateEventSchema };

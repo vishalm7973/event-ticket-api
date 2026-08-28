@@ -2,10 +2,23 @@ const express = require('express');
 const eventController = require('../controllers/eventController');
 const { authenticate, authorize } = require('../middlewares/authMiddleware');
 const validate = require('../middlewares/validate');
-const { createEventSchema } = require('../validators/eventValidator');
+const { createEventSchema, updateEventSchema } = require('../validators/eventValidator');
 const ROLES = require('../constants/roles');
 
 const router = express.Router();
+
+router.get(
+  '/',
+  authenticate,
+  authorize(ROLES.USER, ROLES.ADMIN),
+  eventController.listEvents
+);
+router.get(
+  '/:id',
+  authenticate,
+  authorize(ROLES.USER, ROLES.ADMIN),
+  eventController.getEventById
+);
 
 router.post(
   '/',
@@ -13,6 +26,21 @@ router.post(
   authorize(ROLES.ADMIN),
   validate(createEventSchema),
   eventController.createEvent
+);
+
+router.patch(
+  '/:id',
+  authenticate,
+  authorize(ROLES.ADMIN),
+  validate(updateEventSchema),
+  eventController.updateEvent
+);
+
+router.delete(
+  '/:id',
+  authenticate,
+  authorize(ROLES.ADMIN),
+  eventController.deleteEvent
 );
 
 module.exports = router;
