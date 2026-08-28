@@ -20,4 +20,5 @@ module.exports = {
   USER_NOT_FOUND: 'User not found',
   LOGOUT_SUCCESS: 'Logged out successfully',
   REFRESH_SUCCESS: 'Token refreshed',
+  TOO_MANY_REQUESTS: 'Too many requests, try again later',
 };
