@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema(
     },
     passwordHash: {
       type: String,
-      required: true,
       select: false,
     },
     role: {
@@ -35,6 +34,12 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+userSchema.pre('validate', function () {
+  if (this.isNew && !this._password && !this.passwordHash) {
+    this.invalidate('password', 'Password is required');
+  }
+});
 
 userSchema.pre('save', async function () {
   if (!this._password) return;
