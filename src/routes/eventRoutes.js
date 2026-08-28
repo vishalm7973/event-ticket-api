@@ -4,7 +4,10 @@ const ticketController = require('../controllers/ticketController');
 const { authenticate, authorize } = require('../middlewares/authMiddleware');
 const validate = require('../middlewares/validate');
 const { createEventSchema, updateEventSchema } = require('../validators/eventValidator');
-const { createTicketSchema } = require('../validators/ticketValidator');
+const {
+  createTicketSchema,
+  updateTicketAvailabilitySchema,
+} = require('../validators/ticketValidator');
 const ROLES = require('../constants/roles');
 
 const router = express.Router();
@@ -29,6 +32,14 @@ router.post(
   authorize(ROLES.ADMIN),
   validate(createTicketSchema),
   ticketController.createTicket
+);
+
+router.patch(
+  '/:id/tickets/:ticketId',
+  authenticate,
+  authorize(ROLES.ADMIN),
+  validate(updateTicketAvailabilitySchema),
+  ticketController.updateTicketAvailability
 );
 
 router.get(

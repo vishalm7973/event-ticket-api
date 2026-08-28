@@ -64,4 +64,54 @@ const createBooking = async (userId, data) => {
   }
 };
 
-module.exports = { createBooking };
+const getMyBookings = async (userId) => {
+  return Booking.find({ userId })
+    .populate('eventId')
+    .populate('ticketId')
+    .sort({ createdAt: -1 });
+};
+
+const cancelBooking = async (userId, bookingId) => {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const booking = await Booking.findById(bookingId).session(session);
+
+    if (!booking) {
+      throw new AppError(MESSAGES.BOOKING_NOT_FOUND, HTTP.NOT_FOUND);
+    }
+
+    if (booking.userId.toString() !== userId.toString()) {
+      throw new AppError(MESSAGES.NOT_AUTHORIZED, HTTP.FORBIDDEN);
+    }
+
+    if (booking.status === BOOKING_STATUS.CANCELLED) {
+      throw new AppError(MESSAGES.BOOKING_ALREADY_CANCELLED, HTTP.BAD_REQUEST);
+    }
+
+    booking.status = BOOKING_STATUS.CANCELLED;
+    await booking.save({ session });
+
+    const ticket = await Ticket.findByIdAndUpdate(
+      booking.ticketId,
+      { $inc: { availableQuantity: booking.quantity } },
+      { new: true, session }
+    );
+
+    if (!ticket) {
+      throw new AppError(MESSAGES.TICKET_NOT_FOUND, HTTP.NOT_FOUND);
+    }
+
+    await session.commitTransaction();
+    return booking;
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+};
+
+module.exports = { createBooking, getMyBookings, cancelBooking };
