@@ -7,12 +7,26 @@ const ROLES = require('../constants/roles');
 
 const router = express.Router();
 
+router.get(
+  '/me',
+  authenticate,
+  authorize(ROLES.USER),
+  bookingController.getMyBookings
+);
+
 router.post(
   '/',
   authenticate,
   authorize(ROLES.USER),
   validate(createBookingSchema),
   bookingController.createBooking
+);
+
+router.patch(
+  '/:id/cancel',
+  authenticate,
+  authorize(ROLES.USER),
+  bookingController.cancelBooking
 );
 
 module.exports = router;

@@ -14,4 +14,13 @@ const listTickets = asyncHandler(async (req, res) => {
   sendSuccess(res, tickets);
 });
 
-module.exports = { createTicket, listTickets };
+const updateTicketAvailability = asyncHandler(async (req, res) => {
+  const ticket = await ticketService.updateTicketAvailability(
+    req.params.id,
+    req.params.ticketId,
+    req.body
+  );
+  sendSuccess(res, ticket, MESSAGES.TICKET_UPDATED);
+});
+
+module.exports = { createTicket, listTickets, updateTicketAvailability };

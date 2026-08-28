@@ -9,4 +9,14 @@ const createBooking = asyncHandler(async (req, res) => {
   sendSuccess(res, booking, MESSAGES.BOOKING_CREATED, HTTP.CREATED);
 });
 
-module.exports = { createBooking };
+const getMyBookings = asyncHandler(async (req, res) => {
+  const bookings = await bookingService.getMyBookings(req.user._id);
+  sendSuccess(res, bookings);
+});
+
+const cancelBooking = asyncHandler(async (req, res) => {
+  const booking = await bookingService.cancelBooking(req.user._id, req.params.id);
+  sendSuccess(res, booking, MESSAGES.BOOKING_CANCELLED);
+});
+
+module.exports = { createBooking, getMyBookings, cancelBooking };

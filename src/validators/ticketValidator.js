@@ -16,4 +16,16 @@ const createTicketSchema = Joi.object({
   }),
 });
 
-module.exports = { createTicketSchema };
+// add seats → total +n, available +n
+// remove seats → total -n, available -n (only if enough available)
+const updateTicketAvailabilitySchema = Joi.object({
+  add: Joi.number().integer().min(1),
+  remove: Joi.number().integer().min(1),
+})
+  .xor('add', 'remove')
+  .messages({
+    'object.xor': MESSAGES.TICKET_CAPACITY_CHANGE_REQUIRED,
+    'object.missing': MESSAGES.TICKET_CAPACITY_CHANGE_REQUIRED,
+  });
+
+module.exports = { createTicketSchema, updateTicketAvailabilitySchema };
