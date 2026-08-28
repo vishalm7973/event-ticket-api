@@ -53,4 +53,5 @@ module.exports = {
   BOOKING_NOT_FOUND: 'Booking not found',
   BOOKING_ALREADY_CANCELLED: 'Booking is already cancelled',
   BOOKING_CANCELLED: 'Booking cancelled',
+  BOOKING_STATUS_INVALID: 'Booking status must be CONFIRMED or CANCELLED',
 };

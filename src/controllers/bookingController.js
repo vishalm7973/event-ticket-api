@@ -19,4 +19,9 @@ const cancelBooking = asyncHandler(async (req, res) => {
   sendSuccess(res, booking, MESSAGES.BOOKING_CANCELLED);
 });
 
-module.exports = { createBooking, getMyBookings, cancelBooking };
+const listAllBookings = asyncHandler(async (req, res) => {
+  const bookings = await bookingService.listAllBookings(req.query);
+  sendSuccess(res, bookings);
+});
+
+module.exports = { createBooking, getMyBookings, cancelBooking, listAllBookings };
