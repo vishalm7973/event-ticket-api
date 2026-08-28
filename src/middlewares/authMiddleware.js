@@ -26,6 +26,10 @@ const authenticate = asyncHandler(async (req, res, next) => {
     throw new AppError(MESSAGES.USER_NOT_FOUND, HTTP.UNAUTHORIZED);
   }
 
+  if (decoded.tokenVersion !== user.tokenVersion) {
+    throw new AppError(MESSAGES.INVALID_TOKEN, HTTP.UNAUTHORIZED);
+  }
+
   req.user = user;
   next();
 });
