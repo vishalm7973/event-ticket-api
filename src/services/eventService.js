@@ -88,6 +88,7 @@ module.exports = {
   createEvent,
   listEvents,
   getPublishedEventById,
+  getEventById,
   updateEvent,
   cancelEvent,
 };

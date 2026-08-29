@@ -7,7 +7,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "seed": "node scripts/seed.js",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "postinstall": "node scripts/postinstall.js"
   },
   "author": "",
   "license": "ISC",
@@ -24,10 +25,19 @@
   },
   "devDependencies": {
     "jest": "^30.0.5",
+    "mongodb": "^6.20.0",
+    "mongodb-memory-server": "^11.2.0",
     "nodemon": "^3.1.10",
     "supertest": "^7.1.4"
   },
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testTimeout": 120000,
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  },
+  "overrides": {
+    "mongodb": "6.20.0"
   }
 }

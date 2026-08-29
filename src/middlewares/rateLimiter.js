@@ -10,6 +10,7 @@ const authLimiter = rateLimit({
     success: false,
     message: MESSAGES.TOO_MANY_REQUESTS,
   },
+  skip: () => process.env.NODE_ENV === 'test',
 });
 
 module.exports = { authLimiter };
