@@ -63,6 +63,14 @@ const getEventById = async (id) => {
 const updateEvent = async (id, data) => {
   const event = await getEventById(id);
 
+  if (event.status === EVENT_STATUS.CANCELLED) {
+    throw new AppError(MESSAGES.EVENT_CANCELLED_CANNOT_UPDATE, HTTP.BAD_REQUEST);
+  }
+
+  if (data.status === EVENT_STATUS.PUBLISHED && event.status === EVENT_STATUS.PUBLISHED) {
+    throw new AppError(MESSAGES.EVENT_ALREADY_PUBLISHED, HTTP.BAD_REQUEST);
+  }
+
   const startDate = data.startDate ?? event.startDate;
   const endDate = data.endDate ?? event.endDate;
 
@@ -78,6 +86,11 @@ const updateEvent = async (id, data) => {
 
 const cancelEvent = async (id) => {
   const event = await getEventById(id);
+
+  if (event.status === EVENT_STATUS.CANCELLED) {
+    throw new AppError(MESSAGES.EVENT_ALREADY_CANCELLED, HTTP.BAD_REQUEST);
+  }
+
   event.status = EVENT_STATUS.CANCELLED;
   await event.save();
 

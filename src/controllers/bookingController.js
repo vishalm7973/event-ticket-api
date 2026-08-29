@@ -10,8 +10,8 @@ const createBooking = asyncHandler(async (req, res) => {
 });
 
 const getMyBookings = asyncHandler(async (req, res) => {
-  const bookings = await bookingService.getMyBookings(req.user._id);
-  sendSuccess(res, bookings);
+  const result = await bookingService.getMyBookings(req.user._id, req.query);
+  sendSuccess(res, result);
 });
 
 const cancelBooking = asyncHandler(async (req, res) => {
@@ -20,8 +20,8 @@ const cancelBooking = asyncHandler(async (req, res) => {
 });
 
 const listAllBookings = asyncHandler(async (req, res) => {
-  const bookings = await bookingService.listAllBookings(req.query);
-  sendSuccess(res, bookings);
+  const result = await bookingService.listAllBookings(req.query);
+  sendSuccess(res, result);
 });
 
 module.exports = { createBooking, getMyBookings, cancelBooking, listAllBookings };
