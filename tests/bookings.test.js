@@ -122,4 +122,51 @@ describe('Bookings', () => {
 
     expect(res.status).toBe(400);
   });
+
+  test('my bookings returns paginated result', async () => {
+    const admin = await loginAsAdmin();
+    const user = await registerAndLogin({ email: 'paginated@example.com' });
+    const { eventId, ticketId } = await createPublishedEventWithTicket(admin.accessToken, {
+      totalQuantity: 20,
+    });
+
+    await request(app)
+      .post('/api/bookings')
+      .set('Authorization', `Bearer ${user.accessToken}`)
+      .send({ eventId, ticketId, quantity: 1 });
+
+    const res = await request(app)
+      .get('/api/bookings/me?page=1&limit=5')
+      .set('Authorization', `Bearer ${user.accessToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.bookings).toHaveLength(1);
+    expect(res.body.data.pagination).toEqual({
+      page: 1,
+      limit: 5,
+      total: 1,
+      pages: 1,
+    });
+  });
+
+  test('admin list bookings returns paginated result', async () => {
+    const admin = await loginAsAdmin();
+    const user = await registerAndLogin({ email: 'adminpage@example.com' });
+    const { eventId, ticketId } = await createPublishedEventWithTicket(admin.accessToken);
+
+    await request(app)
+      .post('/api/bookings')
+      .set('Authorization', `Bearer ${user.accessToken}`)
+      .send({ eventId, ticketId, quantity: 1 });
+
+    const res = await request(app)
+      .get('/api/admin/bookings?page=1&limit=10')
+      .set('Authorization', `Bearer ${admin.accessToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.bookings.length).toBeGreaterThanOrEqual(1);
+    expect(res.body.data.pagination.page).toBe(1);
+    expect(res.body.data.pagination.limit).toBe(10);
+    expect(res.body.data.pagination.total).toBeGreaterThanOrEqual(1);
+  });
 });

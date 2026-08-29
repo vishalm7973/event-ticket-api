@@ -64,11 +64,31 @@ const createBooking = async (userId, data) => {
   }
 };
 
-const getMyBookings = async (userId) => {
-  return Booking.find({ userId })
-    .populate('eventId')
-    .populate('ticketId')
-    .sort({ createdAt: -1 });
+const getMyBookings = async (userId, query = {}) => {
+  const page = Math.max(Number(query.page) || 1, 1);
+  const limit = Math.min(Math.max(Number(query.limit) || 10, 1), 100);
+  const skip = (page - 1) * limit;
+  const filter = { userId };
+
+  const [bookings, total] = await Promise.all([
+    Booking.find(filter)
+      .populate('eventId')
+      .populate('ticketId')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Booking.countDocuments(filter),
+  ]);
+
+  return {
+    bookings,
+    pagination: {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit) || 0,
+    },
+  };
 };
 
 const cancelBooking = async (userId, bookingId) => {
@@ -115,6 +135,9 @@ const cancelBooking = async (userId, bookingId) => {
 };
 
 const listAllBookings = async (query = {}) => {
+  const page = Math.max(Number(query.page) || 1, 1);
+  const limit = Math.min(Math.max(Number(query.limit) || 10, 1), 100);
+  const skip = (page - 1) * limit;
   const filter = {};
 
   if (query.status) {
@@ -132,11 +155,26 @@ const listAllBookings = async (query = {}) => {
     filter.userId = query.userId;
   }
 
-  return Booking.find(filter)
-    .populate('userId', 'firstName lastName email')
-    .populate('eventId')
-    .populate('ticketId')
-    .sort({ createdAt: -1 });
+  const [bookings, total] = await Promise.all([
+    Booking.find(filter)
+      .populate('userId', 'firstName lastName email')
+      .populate('eventId')
+      .populate('ticketId')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Booking.countDocuments(filter),
+  ]);
+
+  return {
+    bookings,
+    pagination: {
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit) || 0,
+    },
+  };
 };
 
 module.exports = { createBooking, getMyBookings, cancelBooking, listAllBookings };

@@ -4,9 +4,14 @@ const AppError = require('../utils/AppError');
 const HTTP = require('../constants/httpStatus');
 const MESSAGES = require('../constants/messages');
 const ROLES = require('../constants/roles');
+const EVENT_STATUS = require('../constants/eventStatus');
 
 const createTicket = async (eventId, data) => {
-  await eventService.getEventById(eventId);
+  const event = await eventService.getEventById(eventId);
+
+  if (event.status === EVENT_STATUS.CANCELLED) {
+    throw new AppError(MESSAGES.EVENT_CANCELLED_NO_TICKETS, HTTP.BAD_REQUEST);
+  }
 
   const ticket = await Ticket.create({
     eventId,
@@ -30,7 +35,11 @@ const listTicketsByEvent = async (eventId, role) => {
 };
 
 const updateTicketAvailability = async (eventId, ticketId, data) => {
-  await eventService.getEventById(eventId);
+  const event = await eventService.getEventById(eventId);
+
+  if (event.status === EVENT_STATUS.CANCELLED) {
+    throw new AppError(MESSAGES.EVENT_CANCELLED_NO_TICKETS, HTTP.BAD_REQUEST);
+  }
 
   let ticket;
 
